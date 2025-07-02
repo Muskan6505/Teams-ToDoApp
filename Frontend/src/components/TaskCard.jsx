@@ -2,8 +2,9 @@ import React from "react";
 import { Calendar, Flag, User } from "lucide-react";
 
 export default function TaskCard({ task }) {
+
     const { title, description, dueDate, status, priority} = task;
-    const createdBy = task.creatorDetails?  task.creatorDetails.name : "Unknown"; // Assuming createdBy is an object with a name property
+    const createdBy = task.creatorDetails?  task.creatorDetails.name : "Unknown"; 
     const getStatusColor = () => {
         switch (status) {
             case "ToDo":

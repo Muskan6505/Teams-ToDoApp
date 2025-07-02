@@ -65,7 +65,6 @@ const generateAccessAndRefreshToken = async(userId) => {
 
         user.refreshToken = refreshToken
         user.save({validateBeforeSave: false})
-
         return {accessToken, refreshToken}
 
     }catch(error){
@@ -152,8 +151,7 @@ const refreshAccessToken = asyncHandler(async(req, res) => {
             throw new ApiError(401, "Unauthorized, Please login again");
         }
     
-        const {accessToken, newRefreshToken} = generateAccessAndRefreshToken(user._id);
-    
+        const {accessToken, refreshToken: newRefreshToken} = await generateAccessAndRefreshToken(user._id);
         user = await User.findByIdAndUpdate(
             user._id,
             {
