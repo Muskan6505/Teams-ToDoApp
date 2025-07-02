@@ -146,7 +146,7 @@ const refreshAccessToken = asyncHandler(async(req, res) => {
             process.env.REFRESH_TOKEN_SECRET
         )
     
-        const user = await User.findById(decodedToken._id)
+        let user = await User.findById(decodedToken._id)
     
         if(!user || user.refreshToken !== refreshToken) {
             throw new ApiError(401, "Unauthorized, Please login again");
@@ -154,8 +154,17 @@ const refreshAccessToken = asyncHandler(async(req, res) => {
     
         const {accessToken, newRefreshToken} = generateAccessAndRefreshToken(user._id);
     
-        user.refreshToken = newRefreshToken;
-        await user.save({validateBeforeSave: false});
+        user = await User.findByIdAndUpdate(
+            user._id,
+            {
+                $set: {
+                    refreshToken: newRefreshToken
+                }
+            },
+            {
+                new: true
+            }
+        );
     
         return res
         .status(200)
