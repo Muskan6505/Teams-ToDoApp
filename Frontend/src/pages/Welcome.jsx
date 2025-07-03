@@ -1,5 +1,5 @@
 import React from "react";
-import logo from "../assets/logo.png"; // consider WebP
+import logo from "../assets/Logo.png"; 
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 
