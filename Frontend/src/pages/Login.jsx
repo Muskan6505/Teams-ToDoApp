@@ -4,6 +4,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { login } from "../features/userSlice";
+import { Link } from "react-router-dom";
 
 export default function Login() {
     const [email, setEmail] = useState("");
@@ -53,12 +54,14 @@ export default function Login() {
         <div className="flex flex-col items-center justify-center h-screen bg-gradient-to-br from-black via-indigo-950 to-pink-900 text-white px-4">
             
             {/* Logo + App Name */}
-            <div className="flex items-center mb-8 space-x-3">
-                <img src={logo} alt="Teams ToDo Logo" className="w-12 h-12 object-contain" />
-                <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-400 via-violet-600 to-pink-600 bg-clip-text text-transparent">
-                    Teams ToDo
-                </h2>
-            </div>
+            <Link to="/" className="flex items-center mb-8 space-x-3">
+                <div className="flex items-center mb-8 space-x-3">
+                    <img src={logo} alt="Teams ToDo Logo" className="w-12 h-12 object-contain" />
+                    <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-400 via-violet-600 to-pink-600 bg-clip-text text-transparent">
+                        Teams ToDo
+                    </h2>
+                </div>
+            </Link>
 
             {/* Glassy Login Box */}
             <div className="w-full max-w-md bg-opacity-100 backdrop-blur-lg rounded-xl shadow-[0_0_30px_rgba(255,255,255,0.3)] p-8">
@@ -101,9 +104,9 @@ export default function Login() {
                 {/* Signup Link */}
                 <p className="text-center text-sm mt-4 text-gray-300">
                     Don’t have an account?{" "}
-                    <a href="/signup" className="text-blue-400 hover:underline">
+                    <Link to="/signup" className="text-blue-400 hover:underline">
                         Sign up
-                    </a>
+                    </Link>
                 </p>
             </div>
         </div>

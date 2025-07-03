@@ -5,8 +5,8 @@ import {
 } from 'react-router-dom';
 
 import {
-  Welcome, 
-  Login, 
+  Welcome,
+  Login,
   Signup,
   Dashboard,
   NotFound,
@@ -14,7 +14,7 @@ import {
   Profile,
   KanbanBoard,
   SingleTask
-} from './pages'; 
+} from './pages';
 
 import AuthenticatedLayout from './layout/Authenticated.jsx';
 import { useEffect, useState } from 'react';
@@ -38,14 +38,19 @@ function App() {
       } catch (err) {
         dispatch(logout());
       } finally {
-        setLoading(false); 
+        setLoading(false);
       }
     };
 
     refreshToken();
   }, [dispatch]);
 
-  if (loading) return <div className="text-white text-center mt-20">Loading...</div>;
+  if (loading) return (
+    <div className="flex justify-center items-center h-screen bg-gradient-to-r from-black via-indigo-950 to-pink-900">
+      <div className="w-12 h-12 border-4 border-white border-dashed rounded-full animate-spin"></div>
+        <p className="ml-4 text-white text-xl">Loading...</p>
+    </div>
+  );
 
   return (
     <BrowserRouter>
@@ -57,7 +62,7 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/tasks" element={<Tasks />} />
           <Route path="/profile" element={<Profile />} />
-          <Route path='/kanban' element={<KanbanBoard />} />
+          <Route path="/kanban" element={<KanbanBoard />} />
           <Route path="/task/:taskId" element={<SingleTask />} />
         </Route>
         <Route path="*" element={<NotFound />} />

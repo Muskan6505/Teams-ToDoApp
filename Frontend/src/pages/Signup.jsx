@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import logo from "../assets/Logo.png";
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { login } from "../features/userSlice";
 
 export default function Signup() {
@@ -69,12 +69,12 @@ export default function Signup() {
         <div className="flex flex-col items-center justify-center h-screen bg-gradient-to-br from-black via-indigo-950 to-pink-900 text-white px-4">
             
             {/* Logo + App Name */}
-            <div className="flex items-center mb-8 space-x-3">
+            <Link to={"/"} className="flex items-center mb-8 space-x-3">
                 <img src={logo} alt="Teams ToDo Logo" className="w-12 h-12 object-contain" />
                 <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-400 via-violet-600 to-pink-600 bg-clip-text text-transparent">
                     Teams ToDo
                 </h2>
-            </div>
+            </Link>
 
             {/* Glassy Signup Box */}
             <div className="w-full max-w-md bg-opacity-100 backdrop-blur-lg rounded-xl shadow-[0_0_30px_rgba(255,255,255,0.3)] p-8">
@@ -141,9 +141,9 @@ export default function Signup() {
                 {/* Login Redirect */}
                 <p className="text-center text-sm mt-4 text-gray-300">
                     Already have an account?{" "}
-                    <a href="/login" className="text-blue-400 hover:underline">
+                    <Link to="/login" className="text-blue-400 hover:underline">
                         Login
-                    </a>
+                    </Link>
                 </p>
             </div>
         </div>
