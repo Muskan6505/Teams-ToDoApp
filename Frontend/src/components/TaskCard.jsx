@@ -1,5 +1,6 @@
 import React from "react";
 import { Calendar, Flag, User } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export default function TaskCard({ task }) {
 
@@ -32,6 +33,7 @@ export default function TaskCard({ task }) {
     };
 
     return (
+        <Link to={`/task/${task._id}`} className="no-underline">
         <div className="bg-gray-100 bg-opacity-10 backdrop-blur-md text-black rounded-lg p-5 shadow-md hover:shadow-xl transition">
             {/* Title + Status Badge */}
             <div className="flex justify-between items-center mb-2">
@@ -65,5 +67,6 @@ export default function TaskCard({ task }) {
                 </div>
             </div>
         </div>
+        </Link>
     );
 }

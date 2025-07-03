@@ -12,7 +12,8 @@ import {
   NotFound,
   Tasks,
   Profile,
-  KanbanBoard
+  KanbanBoard,
+  SingleTask
 } from './pages'; 
 
 import AuthenticatedLayout from './layout/Authenticated.jsx';
@@ -57,6 +58,7 @@ function App() {
           <Route path="/tasks" element={<Tasks />} />
           <Route path="/profile" element={<Profile />} />
           <Route path='/kanban' element={<KanbanBoard />} />
+          <Route path="/task/:taskId" element={<SingleTask />} />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>

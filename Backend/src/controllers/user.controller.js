@@ -220,87 +220,112 @@ const updateAccountDetails = asyncHandler(async(req, res) => {
     )
 })
 
-const tasksAssigned = asyncHandler(async(req, res) => {
+const tasksAssigned = asyncHandler(async (req, res) => {
     try {
-    const { page = 1, limit = 10, status, priority, dueDate, search, role = 'assignee' } = req.query;
-    const userId = req.user._id; 
+        const {
+            page = 1,
+            limit = 10,
+            status,
+            priority,
+            dueDate,
+            search,
+            role = "assignee",
+        } = req.query;
 
-    const matchStage = {};
+        const userId = req.user._id;
+        const matchConditions = [];
 
-    if (role === 'assignee') {
-        matchStage.assignedTo = userId;
-    } else if (role === 'creator') {
-        matchStage.createdBy = userId;
-    } else if (role === 'both') {
-        matchStage.$or = [
-            { assignedTo: userId },
-            { createdBy: userId }
-        ];
-    }
+        // Role-based condition
+        if (role === "assignee") {
+            matchConditions.push({ assignedTo: userId });
+        } else if (role === "creator") {
+            matchConditions.push({ createdBy: userId });
+        } else if (role === "both") {
+            matchConditions.push({
+                $or: [
+                    { assignedTo: userId },
+                    { createdBy: userId },
+                ],
+            });
+        }
 
-    if (status) matchStage.status = status;
-    if (priority) matchStage.priority = priority;
-    if (dueDate === 'upcoming') {
-        const now = new Date();
-        const threeDaysLater = new Date(now);
-        threeDaysLater.setDate(now.getDate() + 3);
-        matchStage.dueDate = { $lte: threeDaysLater };
-    }
-    if (search) {
-        matchStage.$or = [
-            ...(matchStage.$or || []), 
-            { title: { $regex: search, $options: 'i' } },
-            { description: { $regex: search, $options: 'i' } }
-        ];
-    }
+        // Status filter
+        if (status) {
+            matchConditions.push({ status });
+        }
 
-    const aggregate = Task.aggregate([
-        { $match: matchStage },
-        {
-            $lookup: {
-            from: 'users',
-            localField: 'assignedTo',
-            foreignField: '_id',
-            as: 'assigneeDetails',
+        // Priority filter
+        if (priority) {
+            matchConditions.push({ priority });
+        }
+
+        // Due date filter
+        if (dueDate === "upcoming") {
+            const now = new Date();
+            const threeDaysLater = new Date(now);
+            threeDaysLater.setDate(now.getDate() + 3);
+            matchConditions.push({ dueDate: { $lte: threeDaysLater } });
+        }
+
+        // Search condition
+        if (search) {
+            matchConditions.push({
+                $or: [
+                    { title: { $regex: search, $options: "i" } },
+                    { description: { $regex: search, $options: "i" } },
+                ],
+            });
+        }
+
+        const matchStage = matchConditions.length > 0 ? { $and: matchConditions } : {};
+
+        const aggregate = Task.aggregate([
+            { $match: matchStage },
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "assignedTo",
+                    foreignField: "_id",
+                    as: "assigneeDetails",
+                },
             },
-        },
-        {
-            $unwind: {
-            path: '$assigneeDetails',
-            preserveNullAndEmptyArrays: true,
+            {
+                $unwind: {
+                    path: "$assigneeDetails",
+                    preserveNullAndEmptyArrays: true,
+                },
             },
-        },
-        {
-            $lookup: {
-            from: 'users',
-            localField: 'createdBy',
-            foreignField: '_id',
-            as: 'creatorDetails',
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "createdBy",
+                    foreignField: "_id",
+                    as: "creatorDetails",
+                },
             },
-        },
-        {
-            $unwind: {
-            path: '$creatorDetails',
-            preserveNullAndEmptyArrays: true,
+            {
+                $unwind: {
+                    path: "$creatorDetails",
+                    preserveNullAndEmptyArrays: true,
+                },
             },
-        },
-        { $sort: { dueDate: 1 } }
-    ]);
+            { $sort: { dueDate: 1 } },
+        ]);
 
-    const options = {
-        page: parseInt(page),
-        limit: parseInt(limit),
-    };
+        const options = {
+            page: parseInt(page),
+            limit: parseInt(limit),
+        };
 
-    const tasks = await Task.aggregatePaginate(aggregate, options);
+        const tasks = await Task.aggregatePaginate(aggregate, options);
 
-    res.status(200).json(tasks);
-
+        res.status(200).json(tasks);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: error.message });
     }
 });
+
 
 
 const getAllUsers = asyncHandler(async(req, res) => {

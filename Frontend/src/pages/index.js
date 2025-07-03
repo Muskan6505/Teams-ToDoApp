@@ -6,6 +6,7 @@ import NotFound from "./NotFound";
 import Tasks from "./Tasks";
 import Profile from "./Profile";
 import KanbanBoard from "./KanbanBoard";
+import SingleTask from "./SingleTask";
 
 export { 
     Welcome,
@@ -15,5 +16,6 @@ export {
     NotFound, 
     Profile,
     Tasks,
-    KanbanBoard
+    KanbanBoard,
+    SingleTask
 };

@@ -19,6 +19,8 @@ export default function Dashboard() {
     const [pendingTasks, setPendings] = useState(0);
     const [deadlineApproaching, setDeadline] = useState(0);
     const [showFilters, setShowFilters] = useState(false);
+    const [loading, setLoading] = useState(false);
+
 
     const dispatch = useDispatch();
 
@@ -38,6 +40,7 @@ export default function Dashboard() {
     };
 
     const handleSearch = async () => {
+        setLoading(true);
         try {
         const res = await axios.get("/api/v1/users/tasks", {
             params: {
@@ -55,6 +58,7 @@ export default function Dashboard() {
         } catch (error) {
         console.error("Error fetching tasks:", error);
         }
+        setLoading(false);
     };
 
     useEffect(() => {
@@ -68,7 +72,7 @@ export default function Dashboard() {
     return (
         <>
         <Navbar />
-        <div className="min-h-screen bg-gradient-to-br from-black via-indigo-950 to-pink-900 text-white px-6 py-6 overflow-scroll">
+        <div style={{overflow:scroll, scrollbarWidth:"none"}} className="min-h-screen bg-gradient-to-br from-black via-indigo-950 to-pink-900 text-white px-6 py-6 pt-25">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 pt-6 gap-4">
             <h1 className="text-3xl sm:text-4xl font-extrabold bg-gradient-to-r from-purple-400 via-violet-600 to-pink-600 bg-clip-text text-transparent">
                 Welcome, {user?.name || "User"} 👋
@@ -98,11 +102,11 @@ export default function Dashboard() {
             </div>
 
             {/* Stats Boxes */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-10 text-black">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10 text-black">
             {[
                 { label: "Total Tasks", value: totalTasks, color: "text-green-800" },
                 { label: "Completed", value: completedTasks, color: "text-indigo-800" },
-                { label: "In Progress", value: inProgressTasks, color: "text-amber-600" },
+                // { label: "In Progress", value: inProgressTasks, color: "text-amber-600" },
                 { label: "Pending", value: pendingTasks, color: "text-cyan-700" },
                 { label: "Deadline Soon", value: deadlineApproaching, color: "text-red-800" },
             ].map((stat, i) => (
@@ -199,24 +203,25 @@ export default function Dashboard() {
 
             {/* Task List Section */}
             <div className="mt-10 min-h-[200px]">
-            {Array.isArray(Tasks) && Tasks.length > 0 ? (
+            {loading ? (
+                <div className="text-center text-lg text-purple-300 animate-pulse">Loading tasks...</div>
+            ) : Array.isArray(Tasks) && Tasks.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {Tasks.map((task) => (
-                    <TaskCard
-                        key={task._id}
-                        task={task}
-                        onEdit={(task) => openEditModal(task)} 
-                        onDelete={(id) => handleDeleteTask(id)} 
-                        onStatusChange={(id, newStatus) => updateTaskStatus(id, newStatus)} 
-                    />
-                ))}
+                    {Tasks.map((task) => (
+                        <TaskCard
+                            key={task._id}
+                            task={task}
+                            onEdit={(task) => openEditModal(task)}
+                            onDelete={(id) => handleDeleteTask(id)}
+                            onStatusChange={(id, newStatus) => updateTaskStatus(id, newStatus)}
+                        />
+                    ))}
                 </div>
             ) : (
-                <div className="text-center text-gray-300 mt-10 text-lg">
-                {Tasks?.length === 0 ? "No tasks found." : "Loading tasks..."}
-                </div>
+                <div className="text-center text-gray-300 mt-10 text-lg">No tasks found.</div>
             )}
-            </div>
+        </div>
+
         </div>
         </>
     );

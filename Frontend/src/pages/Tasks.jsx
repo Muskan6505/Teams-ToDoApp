@@ -6,11 +6,13 @@ import TaskCard from "../components/TaskCard";
 
 export default function Tasks() {
     const [formVisible, setFormVisible] = useState(false);
+    const [loading, setLoading] = useState(false);
+
     const [form, setForm] = useState({
         title: "",
         description: "",
         dueDate: "",
-        priority: "Medium",
+        priority: "Low",
         assignee: "",
         status: "ToDo",
     });
@@ -23,11 +25,15 @@ export default function Tasks() {
     // Fetch team members
     useEffect(() => {
         const fetchTeamMembers = async () => {
+
             try {
+                setLoading(true);
                 const response = await axios.get("/api/v1/users/all");
                 setTeamMembers(response.data?.data || []);
             } catch (error) {
                 console.error("Error fetching team members:", error);
+            }finally{
+                setLoading(false);
             }
         };
 
@@ -37,6 +43,7 @@ export default function Tasks() {
     // Fetch tasks created by current user
     const fetchTasks = async () => {
         try {
+            setLoading(true);
             const res = await axios.get("/api/v1/users/tasks", {
                 params: { role: "creator" },
                 withCredentials: true,
@@ -44,6 +51,8 @@ export default function Tasks() {
             setTaskList(res.data?.tasks || res.data?.docs || []);
         } catch (error) {
             console.error("Failed to fetch tasks:", error);
+        }finally{
+            setLoading(false);
         }
     };
 
@@ -102,7 +111,7 @@ export default function Tasks() {
     return (
         <>
             <Navbar />
-            <div className="min-h-screen bg-gradient-to-br from-black via-indigo-950 to-pink-900 text-white px-6 py-10">
+            <div style={{overflow:scroll, scrollbarWidth:"none"}} className="min-h-screen bg-gradient-to-br from-black via-indigo-950 to-pink-900 text-white px-6 py-10 pt-25">
                 <div className="flex md:justify-between  md:flex-row flex-col items-center mb-6">
                     <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-400 via-violet-600 to-pink-600 bg-clip-text text-transparent">
                         Your Created Tasks
@@ -221,15 +230,16 @@ export default function Tasks() {
                 )}
 
                 {/* Task List Section */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {taskList.length > 0 ? (
-                        taskList.map((task) => (
-                            <TaskCard key={task._id} task={task} />
-                        ))
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 min-h-[100px]">
+                    {loading ? (
+                        <p className="text-center col-span-full text-purple-300 text-lg animate-pulse">Loading tasks...</p>
+                    ) : taskList.length > 0 ? (
+                        taskList.map((task) => <TaskCard key={task._id} task={task} />)
                     ) : (
                         <p className="text-center col-span-full text-gray-300 text-lg">No tasks found.</p>
                     )}
                 </div>
+
             </div>
         </>
     );

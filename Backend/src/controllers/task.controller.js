@@ -69,7 +69,8 @@ const updateTask = asyncHandler(async (req, res) => {
             status: status || task.status
         },
         {new: true}
-    );
+    ).populate('createdBy', 'name email')
+    .populate('assignedTo', 'name email');
 
     if (!updatedTask) {
         throw new ApiError(500, "Failed to update task");

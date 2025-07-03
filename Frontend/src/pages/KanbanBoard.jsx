@@ -61,7 +61,7 @@ export default function KanbanBoard() {
     return (
         <>
         <Navbar />
-        <div className="min-h-screen bg-gradient-to-br from-black via-indigo-950 to-pink-900 text-white px-6 py-6">
+        <div style={{overflow:scroll, scrollbarWidth:"none"}} className="min-h-screen bg-gradient-to-br from-black via-indigo-950 to-pink-900 text-white px-6 py-6 pt-25">
             <h1 className="text-4xl font-extrabold mb-6 bg-gradient-to-r from-purple-400 via-violet-600 to-pink-600 bg-clip-text text-transparent">
             Kanban Board
             </h1>

@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import logo from "../assets/Logo.png";
-import { NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { logout } from "../features/userSlice";
 import { User, Menu, X } from "lucide-react";
@@ -36,16 +36,18 @@ export default function Navbar() {
             : "hover:text-purple-300 transition";
 
     return (
-        <nav className="w-full bg-gradient-to-r from-black via-indigo-950 to-pink-900 text-white shadow-md">
+        <nav className="w-full bg-gradient-to-r from-black via-indigo-950 to-pink-900 text-white shadow-md fixed top-0 left-0 z-50">
             <div className="flex items-center justify-between px-6 py-4 relative">
                 
                 {/* Logo + App Name */}
+                <Link to="/dashboard" className="flex items-center space-x-3">
                 <div className="flex items-center space-x-3">
                     <img src={logo} alt="Teams ToDo Logo" className="w-10 h-10 object-contain" />
                     <h2 className="text-xl font-bold bg-gradient-to-r from-purple-400 via-violet-600 to-pink-600 bg-clip-text text-transparent">
                         Teams ToDo
                     </h2>
                 </div>
+                </Link>
 
                 {/* Desktop Links */}
                 <div className="hidden md:flex items-center space-x-8">
@@ -68,16 +70,16 @@ export default function Navbar() {
                     <div className="relative" ref={menuRef}>
                         <button
                             onClick={() => setShowMenu(!showMenu)}
-                            className="w-10 h-10 flex items-center justify-center rounded-full bg-white bg-opacity-20 hover:bg-opacity-30 transition"
+                            className="w-10 h-10 flex items-center justify-center rounded-full bg-white/40 bg-opacity-50 hover:bg-opacity-30 transition cursor-pointer"
                         >
                             <User className="text-gray-300 w-5 h-5" />
                         </button>
 
                         {showMenu && (
-                            <div className="absolute right-0 mt-2 w-40 bg-gray-800 bg-opacity-10 backdrop-blur-md rounded shadow-md py-2 z-50">
+                            <div className="absolute right-0 mt-2 w-40 bg-white/20 bg-opacity-50 backdrop-blur-md rounded shadow-md py-2 z-50">
                                 <NavLink
                                     to="/profile"
-                                    className="block px-4 py-2 text-sm text-white hover:text-purple-400 transition"
+                                    className="block px-4 py-2 text-sm text-purple-400 hover:text-pink-600 transition"
                                     onClick={() => setShowMenu(false)}
                                 >
                                     My Profile
