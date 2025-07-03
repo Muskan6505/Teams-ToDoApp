@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import TaskCard from "../components/TaskCard";
 import axios from "axios";
 
@@ -38,7 +38,7 @@ export default function KanbanBoard() {
         fetchTasks();
     }, []);
 
-    const onDragEnd = (result) => {
+    const onDragEnd = async (result) => {
         const { source, destination } = result;
         if (!destination) return;
 
@@ -49,14 +49,24 @@ export default function KanbanBoard() {
         const destItems = Array.from(destCol.items);
         destItems.splice(destination.index, 0, moved);
 
+        // Update UI state
         setColumns({
-        ...columns,
-        [source.droppableId]: { ...sourceCol, items: sourceItems },
-        [destination.droppableId]: { ...destCol, items: destItems },
+            ...columns,
+            [source.droppableId]: { ...sourceCol, items: sourceItems },
+            [destination.droppableId]: { ...destCol, items: destItems },
         });
 
-        // TODO: call API to update moved.status for `moved._id`
+        try {
+            await axios.patch(`/api/v1/tasks/${moved._id}`, {
+                status: destination.droppableId,
+            }, {
+                withCredentials: true,
+            });
+        } catch (err) {
+            console.error("Failed to update task status:", err);
+        }
     };
+
 
     return (
         <>
